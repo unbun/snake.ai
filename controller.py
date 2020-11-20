@@ -14,6 +14,7 @@ from constants import *
 def controller(strategies, grid_size, candy_ratio = 1., max_iter = None, verbose = 0, gui_active = False, game_speed = None):
     # Pygame Init
     pygame.init()
+
     clock = pygame.time.Clock()
     if gui_active:    
         gui_options = gui.Options()
@@ -28,6 +29,15 @@ def controller(strategies, grid_size, candy_ratio = 1., max_iter = None, verbose
     game_over = False
 
     agent_names = [a.name for a in strategies]
+
+    if "human" in agent_names:
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    waiting = False
+                    break
+
     i_human = None
     if "human" in agent_names:
         i_human = agent_names.index("human")
@@ -52,7 +62,7 @@ def controller(strategies, grid_size, candy_ratio = 1., max_iter = None, verbose
         if i_human is not None:
             speed = 2. if pygame.K_SPACE in [ev.key for ev in events if ev.type == pygame.KEYDOWN] else 1.
             arrow_key = False 
-            for event in events:                               
+            for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         human_action = move.Move((-1,0),speed)
@@ -113,9 +123,10 @@ if __name__ ==  "__main__":
     minimax_agent = searchAgent("minimax", depth = lambda s,a : 2)
     alphabeta_agent = searchAgent("alphabeta", depth = lambda s,a : survivorDfunc(s, a, 4, 0.5), evalFn = greedyEvaluationFunction)
     expectimax_agent = searchAgent("expectimax", depth = lambda s,a : cowardCenterDepthFunction(s, a, 2), evalFn = greedyEvaluationFunction)
-    
+
+    strategies = [SmartGreedyAgent]
     # strategies = [SmartGreedyAgent, OpportunistAgent]
-    strategies = [SmartGreedyAgent, OpportunistAgent, alphabeta_agent]
+    # strategies = [SmartGreedyAgent, OpportunistAgent, alphabeta_agent]
 
     # add an RL agent
     rl_hp = load_from(config.filename + ".p")
@@ -131,4 +142,4 @@ if __name__ ==  "__main__":
     if human_player:
         strategies.append(HumanAgent)
 
-    controller(strategies, 20, max_iter = max_iter, gui_active = True, verbose = 0, game_speed = 10)
+    controller(strategies, config.window_size, max_iter = max_iter, gui_active = True, verbose = 0, game_speed = 10)
