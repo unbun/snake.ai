@@ -42,7 +42,7 @@ class EsHp:
             pickle.dump(self, fout)
 
 def load_from(filename):
-    with open("data/" + filename, "rb") as fin:
+    with open("data/" + filename, "r") as fin:
         out = pickle.load(fin)
     return out
    

@@ -142,4 +142,4 @@ if __name__ ==  "__main__":
     if human_player:
         strategies.append(HumanAgent)
 
-    controller(strategies, config.window_size, max_iter = max_iter, gui_active = True, verbose = 0, game_speed = 10)
+    controller(strategies, config.window_size, max_iter = max_iter, gui_active = True, verbose = 0, game_speed = config.game_speed)

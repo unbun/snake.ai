@@ -2,7 +2,8 @@ from hp import *
 from constants import *
 from minimax import searchAgent, greedyEvaluationFunction, smartCowardDfunc, survivorDfunc
 
-window_size       = 40
+window_size       = 20
+game_speed        = 5
 agent             = "RL" # will be added to opponents
 # agent             = "ES"
 filename          = "rl-pg-linear-r6-1000-test"
