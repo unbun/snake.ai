@@ -7,12 +7,7 @@ Interface for the multi player snake game
 from future import standard_library
 
 standard_library.install_aliases()
-# ...
-from builtins import bytes
-from builtins import open
-from future.utils import with_metaclass
 
-# imports
 import random, math, copy
 import utils
 import numpy as np
@@ -203,10 +198,9 @@ class State:
                 continue
 
             new_candy_pos = self.snakes[id].move(m)
-
             # We remember where to add candies when the snake accelerated
             if new_candy_pos is not None:
-               candies_to_add.append(new_candy_pos)
+                candies_to_add.append(new_candy_pos)
 
             # We collect candies if head touches a candy
             head = self.snakes[id].head()
@@ -226,6 +220,7 @@ class State:
 
         # add candies created by acceleration
         for cand_pos in candies_to_add:
+
             self.addCandy(cand_pos, CANDY_BONUS)
 
         # remove snakes which bumped into other snakes
@@ -421,10 +416,12 @@ class Game:
         return newState
 
     def agentLastReward(self, agent_id):
+
         if agent_id in self.current_state.snakes:
             reward = self.current_state.snakes[agent_id].points - self.previous_state.snakes[agent_id].points
             if len(self.current_state.snakes) == 1: # it won
                 reward += 10.
         else: # it died
             reward = - 10.
+        print(agent_id, reward)
         return reward

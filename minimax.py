@@ -143,6 +143,7 @@ class FunmaxAlgorithm(MultiAgentSearchAlgorithm):
         def vMinMax(state, depth, agent):
 
             # Edge cases
+            print(state)
             if state.isWin(mm_agent) or state.isLose(mm_agent) or state.isDraw():
                 return state.getScore(mm_agent), None
             if len(state.actions(agent)) == 0 and agent == mm_agent:

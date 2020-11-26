@@ -135,7 +135,7 @@ if __name__ ==  "__main__":
     alphabeta_agent = searchAgent("alphabeta", depth = lambda s,a : survivorDfunc(s, a, 4, 0.5), evalFn = greedyEvaluationFunction)
     expectimax_agent = searchAgent("expectimax", depth = lambda s,a : cowardCenterDepthFunction(s, a, 2), evalFn = greedyEvaluationFunction)
 
-    strategies = [SmartGreedyAgent]
+    strategies = [alphabeta_agent]
     # strategies = [SmartGreedyAgent, OpportunistAgent]
     # strategies = [SmartGreedyAgent, OpportunistAgent, alphabeta_agent]
 
@@ -149,6 +149,7 @@ if __name__ ==  "__main__":
     # esStrategy = load_es_strategy("es-linear-r4-50.p", strategies, featureExtractor, discount = 0.9)
 
     strategies.append(rlStrategy)
+
 
     if human_player:
         strategies.append(HumanAgent)

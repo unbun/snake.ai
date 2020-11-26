@@ -1,18 +1,12 @@
 """
 Reinforcement learning
 """
-
-
-
 from future import standard_library
-
 standard_library.install_aliases()
-# ...
-from builtins import bytes
+
+
 from builtins import open
 from future.utils import with_metaclass
-
-
 import random, math, pickle, time
 import interface, utils
 import numpy as np

@@ -72,7 +72,12 @@ class QLearningAlgorithm(RLAlgorithm):
         if random.random() < self.explorationProb:
             return random.choice(self.actions(state))
         else:
-            return max((self.evalQ(state, action), action) for action in self.actions(state))[1]
+            for action in self.actions(state):
+                print(action)
+                action_list = []
+                action_list.append((self.evalQ(state, action), action))
+                print(action_list)
+            return max(action_list)[1]
 
 
     def getStepSize(self):
