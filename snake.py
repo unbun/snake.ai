@@ -1,3 +1,14 @@
+
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import numpy as np
 from collections import deque
 import utils
@@ -33,7 +44,7 @@ class newSnake:
 
     def onSnakeExceptLastOrNotGrid(self, pos, n):
         return not utils.isOnGrid(pos, self.grid_size) or \
-               (self.countSnake(pos) - sum(int(self.position[-i] == pos) for i in xrange(1,n+1)) >= 1)
+               (self.countSnake(pos) - sum(int(self.position[-i] == pos) for i in range(1,n+1)) >= 1)
 
     def pop(self):
         tail = self.position.pop()
@@ -54,8 +65,8 @@ class newSnake:
         self.position.append(pos)
 
     def isInArea(self, pos, radius):
-        for i in xrange(max(-radius+pos[0],0), min(radius+pos[0]+1, self.grid_size)):
-            for j in xrange(max(-radius+pos[1],0), min(radius+pos[1]+1, self.grid_size)):
+        for i in range(max(-radius+pos[0],0), min(radius+pos[0]+1, self.grid_size)):
+            for j in range(max(-radius+pos[1],0), min(radius+pos[1]+1, self.grid_size)):
                 if self.onSnake((i,j)):
                     return True
         return False
@@ -63,8 +74,8 @@ class newSnake:
     def compactRate(self, radius):
         pos = self.head()
         num = 0
-        for i in xrange(max(-radius+pos[0],0), min(radius+pos[0]+1, self.grid_size)):
-            for j in xrange(max(-radius+pos[1],0), min(radius+pos[1]+1, self.grid_size)):
+        for i in range(max(-radius+pos[0],0), min(radius+pos[0]+1, self.grid_size)):
+            for j in range(max(-radius+pos[1],0), min(radius+pos[1]+1, self.grid_size)):
                 if self.bool_pos[(i,j)]:
                     num += 1
         return float(num)/((2*radius+1)**2 - 1)
@@ -138,11 +149,11 @@ class newSnake:
         self.pop()
         head = utils.add(self.head(), direction)
         if not utils.isOnGrid(head, self.grid_size):
-            print head
-            print self.id
-            print self.position
-            print self.bool_pos
-            print self
+            print(head)
+            print(self.id)
+            print(self.position)
+            print(self.bool_pos)
+            print(self)
         if self.onSnake(head):
             self.on_tail = True
         self.add(head)

@@ -2,6 +2,17 @@
 Reinforcement learning
 """
 
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
+
 import random, math, pickle, time
 import interface, utils
 import numpy as np
@@ -36,7 +47,7 @@ def rl_strategy(strategies, featureExtractor, game_hp, rl_hp, num_trials = 100, 
     else:
         if rl_hp.lambda_:
             if rl_hp.q_type != "linear":
-                print "Warning, linear model with eligibility traces instead of", rl_hp.q_type
+                print("Warning, linear model with eligibility traces instead of", rl_hp.q_type)
             rl = QLambdaLearningAlgorithm(actions, discount = game_hp.discount, featureExtractor = featureExtractor, lambda_ = rl_hp.lambda_, explorationProb = QL_EXPLORATIONPROB)
         elif rl_hp.q_type == "nn":
             rl = nnQLearningAlgorithm(actions, discount = game_hp.discount, featureExtractor = featureExtractor, explorationProb = QL_EXPLORATIONPROB, init_weights = "simple-ql-r6.p")
@@ -49,11 +60,11 @@ def rl_strategy(strategies, featureExtractor, game_hp, rl_hp, num_trials = 100, 
 
     rl_hp.save_model(rl.exportModel(), filename)
     
-    with open("info/{}txt".format(filename[:-1]), "wb") as fout:
-        print >> fout, "strategies: ", [s.__str__() for s in strategies]
-        print >> fout, "feature radius: ", rl_hp.radius
-        print >> fout, "grid: {}, lambda: {}, trials: {}, max_iter: {}".format(game_hp.grid_size, rl_hp.lambda_, num_trials, game_hp.max_iter)
-        print >> fout, "discount: {}, fiter actions: {}, explorationProb: {}".format(game_hp.discount, rl_hp.filter_actions, QL_EXPLORATIONPROB)
+    with open("info/{}txt".format(filename[:-1]), "w") as fout:
+        print("strategies: ", [s.__str__() for s in strategies], file=fout)
+        print("feature radius: ", rl_hp.radius, file=fout)
+        print("grid: {}, lambda: {}, trials: {}, max_iter: {}".format(game_hp.grid_size, rl_hp.lambda_, num_trials, game_hp.max_iter), file=fout)
+        print("discount: {}, fiter actions: {}, explorationProb: {}".format(game_hp.discount, rl_hp.filter_actions, QL_EXPLORATIONPROB), file=fout)
     
     return rl_agent
 

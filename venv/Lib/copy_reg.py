@@ -4,6 +4,7 @@ This is only useful to add pickle support for extension types defined in
 C, not for instances of user-defined classes.
 """
 
+from future.utils import raise_
 from types import ClassType as _ClassType
 
 __all__ = ["pickle", "constructor",
@@ -67,7 +68,7 @@ def _reduce_ex(self, proto):
         state = None
     else:
         if base is self.__class__:
-            raise TypeError, "can't pickle %s objects" % base.__name__
+            raise_(TypeError, "can't pickle %s objects" % base.__name__)
         state = base(self)
     args = (self.__class__, base, state)
     try:
@@ -162,7 +163,7 @@ def add_extension(module, name, code):
     """Register an extension code."""
     code = int(code)
     if not 1 <= code <= 0x7fffffff:
-        raise ValueError, "code out of range"
+        raise ValueError("code out of range")
     key = (module, name)
     if (_extension_registry.get(key) == code and
         _inverted_registry.get(code) == key):

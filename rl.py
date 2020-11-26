@@ -1,4 +1,15 @@
 
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
+
 import random, math, pickle, time
 import interface, utils
 import numpy as np
@@ -39,7 +50,7 @@ class RLAlgorithm(object):
     #     raise NotImplementedError("train not implemented")
 
     def train(self, opponents, grid_size, num_trials=100, max_iter=1000, verbose=False):
-        print "RL training"
+        print("RL training")
         totalRewards = []  # The rewards we get on each trial
         # rl_id = len(opponents)
         rl_agent = self.getAgent()
@@ -47,7 +58,7 @@ class RLAlgorithm(object):
         agents = deepcopy(opponents) # add current agent to strategies
         agents.append(rl_agent)
 
-        for trial in xrange(num_trials):
+        for trial in range(num_trials):
             # game = interface.Game(grid_size, len(strategies) + 1, candy_ratio = 1., max_iter = max_iter)
             # state = game.startState()
             game = interface.Game(grid_size, len(agents), candy_ratio = 1., max_iter = max_iter)
@@ -78,9 +89,9 @@ class RLAlgorithm(object):
 
             progressBar(trial, num_trials, info = "Last reward: {}".format(totalReward))
             if verbose:
-                print "Trial %d (totalReward = %s)" % (trial, totalReward)
+                print("Trial %d (totalReward = %s)" % (trial, totalReward))
             totalRewards.append(totalReward)
 
         progressBar(num_trials, num_trials)
-        print "Average reward:", sum(totalRewards)/num_trials
+        print("Average reward:", sum(totalRewards)/num_trials)
         return totalRewards

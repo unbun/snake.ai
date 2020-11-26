@@ -3,6 +3,17 @@ Q learning
 """
 
 
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
+
+
 import random, math, pickle, time
 import interface, utils
 import numpy as np
@@ -210,7 +221,7 @@ class nnQLearningAlgorithm(QLearningAlgorithm):
             self._reset_cache()
 
         if self.numIters % 3000 == 0 and self.print_time:
-            print "{:.2f}\t{:.2f}\t{:.2f}".format(1000. * np.mean(self.time_feat), 1000. * np.mean(self.time_pred), 1000. * np.mean(self.time_fit))
+            print("{:.2f}\t{:.2f}\t{:.2f}".format(1000. * np.mean(self.time_feat), 1000. * np.mean(self.time_pred), 1000. * np.mean(self.time_fit)))
 
 
 

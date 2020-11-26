@@ -2,6 +2,17 @@
 Reinforcement learning via policy gradients
 """
 
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
+
 import random, math, pickle, time
 import interface, move, utils
 import numpy as np
@@ -67,7 +78,7 @@ class PolicyGradientAlgorithm(RLAlgorithm):
 
         # choose which (relative) action to take
         if self.exploration:
-            action_idx = np.random.choice(range(self.n_actions), p = probas)
+            action_idx = np.random.choice(list(range(self.n_actions)), p = probas)
 
             # training on-going, save action taken and proba
             self._x_buffer.append(self.featureExtractor.arrayExtractor(state, NO_MOVE))
@@ -114,7 +125,7 @@ class PolicyGradientAlgorithm(RLAlgorithm):
         n_steps = len(rewards)
         dr = list(np.zeros(n_steps))
         s = 0
-        for t in xrange(1, n_steps + 1):
+        for t in range(1, n_steps + 1):
             s = self.discount * s + rewards[n_steps - t]
             dr[n_steps - t] = s
 

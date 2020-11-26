@@ -1,3 +1,14 @@
+from __future__ import unicode_literals
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
+
 from move import Move
 from agent import Agent
 from strategies import *

@@ -1,13 +1,24 @@
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import pickle
+
 
 class HP:
     def __init__(self, grid_size, max_iter, discount):
         self.grid_size = grid_size
         self.max_iter = max_iter
         self.discount = discount
-    
+
     def __str__(self):
-        return " | ".join(["{} = {}".format(k,v) for k,v in self.__dict__.iteritems()])
+        return " | ".join(["{} = {}".format(k, v) for k, v in list(self.__dict__.items())])
 
 
 class RlHp:
@@ -20,20 +31,21 @@ class RlHp:
         self.model = None
 
     def __str__(self):
-        return " | ".join(["{} = {}".format(k,v) for k,v in self.__dict__.iteritems() if k != "model"])
+        return " | ".join(["{} = {}".format(k, v) for k, v in list(self.__dict__.items()) if k != "model"])
 
     def save_model(self, model, filename):
         self.model = model
 
         with open("data/" + filename, "wb") as fout:
             pickle.dump(self, fout)
+
 
 class EsHp:
     def __init__(self, radius):
         self.radius = radius
 
     def __str__(self):
-        return " | ".join(["{} = {}".format(k,v) for k,v in self.__dict__.iteritems()])
+        return " | ".join(["{} = {}".format(k, v) for k, v in list(self.__dict__.items())])
 
     def save_model(self, model, filename):
         self.model = model
@@ -41,8 +53,8 @@ class EsHp:
         with open("data/" + filename, "wb") as fout:
             pickle.dump(self, fout)
 
+
 def load_from(filename):
-    with open("data/" + filename, "r") as fin:
+    with open("data/" + filename, "rb") as fin:
         out = pickle.load(fin)
     return out
-   

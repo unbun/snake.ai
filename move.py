@@ -1,4 +1,14 @@
+
+
 import utils
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 
 class Move:
     """

@@ -1,3 +1,14 @@
+
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import utils
 import random
 import numpy as np
@@ -52,47 +63,47 @@ def greedyEvaluationFunction(state, agent):
     if agent not in state.snakes:
         return state.getScore(agent)
     return state.getScore(agent) -min(
-        float(utils.dist(state.snakes[agent].head(), candy))/(2*state.grid_size) for candy in state.candies.iterkeys()
+        float(utils.dist(state.snakes[agent].head(), candy))/(2*state.grid_size) for candy in list(state.candies.keys())
     )
 
 def cowardDepthFunction(state, mm_agent, radius):
-    if mm_agent not in state.snakes.iterkeys():
+    if mm_agent not in iter(list(state.snakes.keys())):
         return 0, None
     head = state.snakes[mm_agent].head()
-    if any(s.isInArea(head, radius) for a,s in state.snakes.iteritems() if a != mm_agent):
+    if any(s.isInArea(head, radius) for a,s in list(state.snakes.items()) if a != mm_agent):
         return 2, None
     return 0, None
 
 def smartCowardDfunc(state, mm_agent, radius):
-    if mm_agent not in state.snakes.iterkeys():
+    if mm_agent not in iter(list(state.snakes.keys())):
         return 0, None
     head = state.snakes[mm_agent].head()
-    dangerous_snakes = [a for a,s in state.snakes.iteritems()
+    dangerous_snakes = [a for a,s in list(state.snakes.items())
                         if utils.dist(head, s.head()) <=  radius]
-    if any(s.isInArea(head, radius) for a,s in state.snakes.iteritems() if a != mm_agent):
+    if any(s.isInArea(head, radius) for a,s in list(state.snakes.items()) if a != mm_agent):
         return 3, dangerous_snakes
     return 2, dangerous_snakes
 
 def survivorDfunc(state, mm_agent, radius=2, compactness=0.6):
-    if mm_agent not in state.snakes.iterkeys():
+    if mm_agent not in iter(list(state.snakes.keys())):
         return 0, None
     head = state.snakes[mm_agent].head()
-    dangerous_snakes = [a for a,s in state.snakes.iteritems()
+    dangerous_snakes = [a for a,s in list(state.snakes.items())
                         if utils.dist(head, s.head()) <=  radius]
-    if any(s.isInArea(head, radius) for a,s in state.snakes.iteritems() if a != mm_agent):
+    if any(s.isInArea(head, radius) for a,s in list(state.snakes.items()) if a != mm_agent):
         return 3, dangerous_snakes
     if state.snakes[mm_agent].compactRate(radius) > compactness:
         return 5, dangerous_snakes
     return 1, dangerous_snakes
 
 def cowardCenterDepthFunction(state, mm_agent, radius):
-    if mm_agent not in state.snakes.iterkeys():
+    if mm_agent not in iter(list(state.snakes.keys())):
         return 0, None
     head = state.snakes[mm_agent].head()
     grid_size = state.snakes[mm_agent].grid_size
     if min(head[0], head[1]) <= radius-1 or max(head[0], head[1]) >= grid_size-radius:
         return 2, None
-    if any(s.isInArea(head, radius) for a,s in state.snakes.iteritems() if a != mm_agent):
+    if any(s.isInArea(head, radius) for a,s in list(state.snakes.items()) if a != mm_agent):
         return 2, None
     return 0, None
 
@@ -246,7 +257,7 @@ class AlphaBetaAlgorithm(MultiAgentSearchAlgorithm):
         """
         d, close_agents = self.depth(gameState, mm_agent)
         if verbose == 1:
-            print d, close_agents
+            print((d, close_agents))
         def vMinMax(state, depth, agent, alpha, beta):
             if state.isWin(mm_agent) or state.isLose(mm_agent) or state.isDraw():
                 return state.getScore(mm_agent), None

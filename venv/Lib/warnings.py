@@ -1,4 +1,5 @@
 """Python part of the warnings subsystem."""
+from __future__ import print_function
 
 # Note: function level imports should *not* be used
 # in this module as it may cause import lock deadlock.
@@ -80,7 +81,7 @@ def filterwarnings(action, message="", category=Warning, module="", lineno=0,
     assert action in ("error", "ignore", "always", "default", "module",
                       "once"), "invalid action: %r" % (action,)
     assert isinstance(message, basestring), "message must be a string"
-    assert isinstance(category, (type, types.ClassType)), \
+    assert isinstance(category, type), \
            "category must be a class"
     assert issubclass(category, Warning), "category must be a Warning subclass"
     assert isinstance(module, basestring), "module must be a string"
@@ -126,8 +127,8 @@ def _processoptions(args):
     for arg in args:
         try:
             _setoption(arg)
-        except _OptionError, msg:
-            print >>sys.stderr, "Invalid -W option ignored:", msg
+        except _OptionError as msg:
+            print("Invalid -W option ignored:", msg, file=sys.stderr)
 
 # Helper for _processoptions()
 def _setoption(arg):

@@ -13,7 +13,7 @@ import __builtin__, sys
 
 try:
     from _codecs import *
-except ImportError, why:
+except ImportError as why:
     raise SystemError('Failed to load the builtin codecs: %s' % why)
 
 __all__ = ["register", "lookup", "open", "EncodedFile", "BOM", "BOM_BE",
@@ -492,7 +492,7 @@ class StreamReader(Codec):
             data = self.bytebuffer + newdata
             try:
                 newchars, decodedbytes = self.decode(data, self.errors)
-            except UnicodeDecodeError, exc:
+            except UnicodeDecodeError as exc:
                 if firstline:
                     newchars, decodedbytes = self.decode(data[:exc.start], self.errors)
                     lines = newchars.splitlines(True)
@@ -698,7 +698,7 @@ class StreamReaderWriter:
     def next(self):
 
         """ Return the next decoded line from the input stream."""
-        return self.reader.next()
+        return next(self.reader)
 
     def __iter__(self):
         return self
@@ -817,7 +817,7 @@ class StreamRecoder:
     def next(self):
 
         """ Return the next decoded line from the input stream."""
-        data = self.reader.next()
+        data = next(self.reader)
         data, bytesencoded = self.encode(data, self.errors)
         return data
 

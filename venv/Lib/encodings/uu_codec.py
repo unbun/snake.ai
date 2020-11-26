@@ -12,7 +12,7 @@ import codecs, binascii
 
 ### Codec APIs
 
-def uu_encode(input,errors='strict',filename='<data>',mode=0666):
+def uu_encode(input,errors='strict',filename='<data>',mode=0o666):
 
     """ Encodes the object input and returns a tuple (output
         object, length consumed).
@@ -32,7 +32,7 @@ def uu_encode(input,errors='strict',filename='<data>',mode=0666):
     write = outfile.write
 
     # Encode
-    write('begin %o %s\n' % (mode & 0777, filename))
+    write('begin %o %s\n' % (mode & 0o777, filename))
     chunk = read(45)
     while chunk:
         write(b2a_uu(chunk))
@@ -70,7 +70,7 @@ def uu_decode(input,errors='strict'):
     while 1:
         s = readline()
         if not s:
-            raise ValueError, 'Missing "begin" line in input data'
+            raise ValueError('Missing "begin" line in input data')
         if s[:5] == 'begin':
             break
 
@@ -82,14 +82,14 @@ def uu_decode(input,errors='strict'):
             break
         try:
             data = a2b_uu(s)
-        except binascii.Error, v:
+        except binascii.Error as v:
             # Workaround for broken uuencoders by /Fredrik Lundh
             nbytes = (((ord(s[0])-32) & 63) * 4 + 5) // 3
             data = a2b_uu(s[:nbytes])
             #sys.stderr.write("Warning: %s\n" % str(v))
         write(data)
     if not s:
-        raise ValueError, 'Truncated input data'
+        raise ValueError('Truncated input data')
 
     return (outfile.getvalue(), len(input))
 

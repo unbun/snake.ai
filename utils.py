@@ -1,3 +1,14 @@
+
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import sys
 import numpy as np
 
@@ -14,7 +25,7 @@ def add(tuple1, tuple2, mu = 1):
     """
     Return tuple1 + mu * tuple2.
     """
-    return tuple([tuple1[i] + mu * tuple2[i] for i in xrange(len(tuple1))])
+    return tuple([tuple1[i] + mu * tuple2[i] for i in range(len(tuple1))])
 
 def mult(t, mu):
     return tuple([x * mu for x in t])
@@ -61,11 +72,13 @@ def progressBar(iteration, n_total, size = 50, info = None):
     size = min(size, n_total)
     if iteration % (n_total/size) == 0:
         sys.stdout.write('\r')
-        i = iteration*size/n_total
+        i = iteration*size//n_total
+        print("Iteration:", iteration)
+        print("size:", size)
         if info is not None:
-            sys.stdout.write("[<{}D-<{}] {}% | {}".format('='*i, ' '*(size-i), (100/size)*i, info))
+            sys.stdout.write("[<{}D-<{}] {}% | {}".format('='*i, ' '*(size-i), (100//size)*i, info))
         else:
-            sys.stdout.write("[<{}D-<{}] {}%".format('='*i, ' '*(size-i), (100/size)*i))
+            sys.stdout.write("[<{}D-<{}] {}%".format('='*i, ' '*(size-i), (100//size)*i))
         sys.stdout.flush()
     if iteration == n_total:
-        print ""
+        print("")

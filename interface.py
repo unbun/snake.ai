@@ -2,6 +2,16 @@
 Interface for the multi player snake game
 """
 
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 # imports
 import random, math, copy
 import utils
@@ -34,9 +44,9 @@ class State:
     def __str__(self):
         s = "--- state {} ---\n".format(self.iter)
         s += "- snakes:\n"
-        s += "\n".join(["\t{}:\t{}\t-\t{}".format(id, s.points, s.position) for id,s in self.snakes.iteritems()])
+        s += "\n".join(["\t{}:\t{}\t-\t{}".format(id, s.points, s.position) for id,s in self.snakes.items()])
         s += "\n- candies:\n"
-        s += "\n".join(["\t{}\t{}".format(v, pos) for pos,v in self.candies.iteritems()])
+        s += "\n".join(["\t{}\t{}".format(v, pos) for pos,v in self.candies.items()])
         return s
 
     def shape(self, i, j):
@@ -44,7 +54,7 @@ class State:
             if self.candies[(i,j)] == CANDY_BONUS:
                 return ' +'
             return ' *'
-        for id, s in self.snakes.iteritems():
+        for id, s in self.snakes.items():
             if (i,j) == s.position[0]:
                 return ' @'
             c = s.countSnake((i,j))
@@ -62,7 +72,7 @@ class State:
         for i in range(grid_size):
             s += '|' + ''.join(self.shape(i,j) for j in range(grid_size)) + '|\n'
         s += "-" * 2*(grid_size + 1)+ '\n'
-        print s
+        print(s)
 
     def isAlive(self, snake_id):
         """
@@ -77,8 +87,8 @@ class State:
         :param val: the value of the candy
         :return: True if the candy has been added, False if not
         """
-        if all(not s.onSnake(pos) for a, s in self.snakes.iteritems() if a != dead_snake) \
-                and not pos in self.candies.keys():
+        if all(not s.onSnake(pos) for a, s in self.snakes.items() if a != dead_snake) \
+                and not pos in list(self.candies.keys()):
             self.candies[pos] = val
             return True
         return False
@@ -92,7 +102,7 @@ class State:
                 n -= 1
 
     def onOtherSnakes(self, pos, id):
-        return any(s.onSnake(pos) for i,s in self.snakes.iteritems() if i != id)
+        return any(s.onSnake(pos) for i,s in self.snakes.items() if i != id)
 
     def oneAgentUpdate(self, id, m):
         #Remember changes
@@ -186,7 +196,7 @@ class State:
         # update positions
         candies_to_add = []
         accelerated = {}
-        for id, m in moves.iteritems():
+        for id, m in moves.items():
             # If the snake couldn't move, then it's dead
             if m is None or not self.snakes[id].authorizedMove(m):
                 deads.append(id)
@@ -220,7 +230,7 @@ class State:
 
         # remove snakes which bumped into other snakes
 
-        for id in moves.keys():
+        for id in list(moves.keys()):
             # list of (x,y) points occupied by other snakes
             if not id in deads and (self.onOtherSnakes(self.snakes[id].position[0], id)\
                     or (accelerated[id] and self.onOtherSnakes(self.snakes[id].position[1], id))\
@@ -238,16 +248,16 @@ class State:
             del self.snakes[id]
         
         if len(self.snakes) == 1:
-            winner = self.snakes.keys()[0]
+            winner = list(self.snakes.keys())[0]
             self.scores[winner] = (1, self.snakes[winner].points)
 
         return self
 
     def isWin(self, agent):
-        return len(self.snakes) == 1 and agent in self.snakes.iterkeys()
+        return len(self.snakes) == 1 and agent in iter(self.snakes.keys())
 
     def isLose(self, agent):
-        return len(self.snakes) >= 1 and agent not in self.snakes.iterkeys()
+        return len(self.snakes) >= 1 and agent not in iter(self.snakes.keys())
 
     def isDraw(self):
         return len(self.snakes) == 0
@@ -257,9 +267,9 @@ class State:
 
     def getNextAgent(self, agent, agents=None):
         if agents is None:
-            agents = self.snakes.keys()
+            agents = list(self.snakes.keys())
         else:
-            agents = set(agents).intersection(set(self.snakes.iterkeys()))
+            agents = set(agents).intersection(set(self.snakes.keys()))
         for i in range(1,self.n_snakes+1):
             next_snake = (agent+i) % self.n_snakes
             if next_snake in agents:
@@ -350,16 +360,17 @@ class Game:
 
         n_squares_per_row = int(math.ceil(math.sqrt(self.n_snakes))**2)
         square_size = self.grid_size / int(n_squares_per_row)
-        assignment = random.sample(range(n_squares_per_row ** 2), self.n_snakes)
-
+        assignment = random.sample(list(range(n_squares_per_row * 2)), self.n_snakes)
 
         assert self.grid_size >= 3*n_squares_per_row
 
         snakes = {}
         for snake, assign in enumerate(assignment):
-            head = (random.randint(1, square_size-2) + (assign / n_squares_per_row) * square_size,
-                    random.randint(1, square_size-2) + (assign % n_squares_per_row) * square_size)
-            snakes[snake] = newSnake([head, utils.add(head, random.sample(DIRECTIONS, 1)[0])], snake)
+            head = (int(random.randint(1, square_size-2) + (assign / n_squares_per_row) * square_size),
+                    int(random.randint(1, square_size-2) + (assign % n_squares_per_row) * square_size))
+            print(head)
+            random_sample = random.sample(DIRECTIONS, 1)[0]
+            snakes[snake] = newSnake([head, utils.add(head, random_sample)], snake)
 
         candies_to_put = 2 * int(self.candy_ratio) + 1
         start_state = State(snakes, {})
@@ -391,7 +402,7 @@ class Game:
         return self.current_state.isAlive(agent_id)
 
     def agentActions(self):
-        return {i: self.agents[i].nextAction(self.current_state) for i in self.current_state.snakes.keys()}
+        return {i: self.agents[i].nextAction(self.current_state) for i in list(self.current_state.snakes.keys())}
 
     def succ(self, state, actions, copy = True):
         """

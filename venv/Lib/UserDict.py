@@ -1,5 +1,6 @@
 """A more or less complete user-defined wrapper around dictionary objects."""
 
+from future.utils import raise_
 class UserDict:
     def __init__(*args, **kwargs):
         if not args:
@@ -136,7 +137,7 @@ class DictMixin:
             return False
         return True
     def __contains__(self, key):
-        return self.has_key(key)
+        return key in self
 
     # third level takes advantage of second level definitions
     def iteritems(self):
@@ -164,8 +165,8 @@ class DictMixin:
         return default
     def pop(self, key, *args):
         if len(args) > 1:
-            raise TypeError, "pop expected at most 2 arguments, got "\
-                              + repr(1 + len(args))
+            raise_(TypeError, "pop expected at most 2 arguments, got "\
+                              + repr(1 + len(args)))
         try:
             value = self[key]
         except KeyError:
@@ -176,9 +177,9 @@ class DictMixin:
         return value
     def popitem(self):
         try:
-            k, v = self.iteritems().next()
+            k, v = next(self.iteritems())
         except StopIteration:
-            raise KeyError, 'container is empty'
+            raise KeyError('container is empty')
         del self[k]
         return (k, v)
     def update(self, other=None, **kwargs):

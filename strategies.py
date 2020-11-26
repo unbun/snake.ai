@@ -2,6 +2,15 @@
 Strategies for players.
 """
 
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 from utils import *
 import random
 
@@ -27,7 +36,7 @@ def greedyStrategy(id, state):
     if len(state.candies) == 0:
         return random.sample(actions, 1)[0]
     best_move = min((dist(move.apply(head), candy), move)
-                    for candy in state.candies.keys() for move in actions)
+                    for candy in list(state.candies.keys()) for move in actions)
     return best_move[1]
 
 def smartGreedyStrategy(id, state):
@@ -35,6 +44,7 @@ def smartGreedyStrategy(id, state):
     Take action which brings us closest to a candy
     Checks if we're hitting another snake
     """
+    global distances
     snake = state.snakes[id]
     # Computing the list of actions that won't kill the snake
     actions = [move for move in state.simple_actions(id) if not state.onOtherSnakes(snake.predictHead(move), id)]
@@ -46,8 +56,12 @@ def smartGreedyStrategy(id, state):
     # If there is no candy we move randomly
     if len(state.candies) == 0:
         return random.sample(actions, 1)[0]
-    best_move = min((dist(snake.predictHead(move), candy), move)
-                    for candy in state.candies.iterkeys() for move in actions)
+    for candy in state.candies.keys():
+        for move in actions:
+            distances = []
+            distances.append((dist(snake.predictHead(move), candy),move))
+
+    best_move = min(distances)
     return best_move[1]
 
 def opportunistStrategy(id, state):
@@ -68,11 +82,11 @@ def opportunistStrategy(id, state):
     if len(state.candies) == 0:
         return random.sample(actions, 1)[0]
     
-    min_dist = dict((candy, min(dist(s.position[0], candy) for s in state.snakes.itervalues()))
-                    for candy in state.candies.keys())
+    min_dist = dict((candy, min(dist(s.position[0], candy) for s in state.snakes.values()))
+                    for candy in list(state.candies.keys()))
     best_move = min((dist(snake.predictHead(move), candy) - min_dist[candy],
                      dist(snake.predictHead(move), candy), move)
-                    for candy in state.candies.iterkeys() for move in actions)
+                    for candy in state.candies.keys() for move in actions)
     return best_move[2]
 
 

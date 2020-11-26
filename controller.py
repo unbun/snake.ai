@@ -1,3 +1,14 @@
+
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import sys, pickle
 import pygame
 import gui, move, config
@@ -83,13 +94,13 @@ def controller(strategies, grid_size, candy_ratio = 1., max_iter = None, verbose
                 human_action = prev_human_action
  
         # Assign human action
-        if i_human is not None and i_human in actions.keys(): 
+        if i_human is not None and i_human in list(actions.keys()): 
             actions[i_human] = human_action 
             prev_human_action = human_action
 
         if verbose > 1:
-            print state
-            print actions
+            print(state)
+            print(actions)
 
         # Update the state
         if not game_over:

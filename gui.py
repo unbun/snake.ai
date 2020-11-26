@@ -2,6 +2,16 @@
 Manage GUI
 """
 
+
+
+from future import standard_library
+
+standard_library.install_aliases()
+# ...
+from builtins import bytes
+from builtins import open
+from future.utils import with_metaclass
+
 import pygame, interface
 import collections
 from pdb import set_trace as t
@@ -17,7 +27,7 @@ class Options:
         self.candy_colors = ['BRONZE','GOLD']
         self.headColor = 'WHITE'
         # Segment geometry        
-        self.segment_side = 10
+        self.segment_side = 20
         self.segment_margin = 2
         self.total_size = self.segment_side + self.segment_margin
 
@@ -45,7 +55,7 @@ class SnakeSprite:
         pos_count = collections.defaultdict(int)
         for pos in tail:
             pos_count[pos] +=1
-        for pos,n in pos_count.iteritems():
+        for pos,n in pos_count.items():
             tile_color = options.colors[color]
             if n>1:
                 tile_color = self.darken(tile_color)                    
@@ -70,12 +80,12 @@ class Window:
         self.all_sprites = pygame.sprite.Group() 
 
         # Show candies
-        for pos,value in state.candies.items():
+        for pos,value in list(state.candies.items()):
             color = 'GOLD' if value == interface.CANDY_BONUS else 'BRONZE'
             self.all_sprites.add(SegmentSprite(self.xy2uv([pos])[0],self.options.colors[color],self.options))
 
         # Show Snakes
-        for i,snake in state.snakes.items():
+        for i,snake in list(state.snakes.items()):
             color = self.options.snake_colors[i % len(self.options.snake_colors)] 
             self.all_sprites.add(SnakeSprite(self.xy2uv(snake.position),color,self.options).segments)
 
@@ -88,7 +98,7 @@ class Window:
         self.display.flip()
 
     def print_message(self, message):
-        print message
+        print(message)
 
     # Convert grid (x,y) gui/pixel (u,v) indices
     def xy2uv(self,xy_list):        
